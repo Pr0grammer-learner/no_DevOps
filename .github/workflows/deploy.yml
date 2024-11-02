@@ -15,11 +15,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Verify Docker Username and Password
-        run: |
-          echo "DOCKER_USERNAME is set to: ${{ secrets.DOCKER_USERNAME }}"
-          echo "DOCKER_PASSWORD is set to: ${{ secrets.DOCKER_PASSWORD }}"
-
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
@@ -61,7 +56,7 @@ jobs:
         with:
           host: ${{ secrets.HOSTING_SERVER }}
           username: "root"
-          key: ${{ secrets.HOSTING_SSH_KEY }}  # Используем SSH-ключ вместо пароля
+          key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
             apt-get update
             apt-get install -y docker.io
