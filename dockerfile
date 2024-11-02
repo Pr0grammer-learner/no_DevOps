@@ -16,7 +16,8 @@ COPY . .
 # Устанавливаем переменную окружения PYTHONPATH
 ENV PYTHONPATH=/app
 
-# Установка pytest для тестирования
+# Установка pytest для тестирования (только для CI/CD, не запускается в контейнере)
 RUN pip install pytest
 
-CMD ["pytest"]
+# Запуск Flask-сервера
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
