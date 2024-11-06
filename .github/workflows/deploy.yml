@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r tests/requirements.txt  # Устанавливаем зависимости из tests/requirements.txt
+          pip install -r tests/requirements.txt
 
       - name: Run tests
         env:
@@ -59,11 +59,16 @@ jobs:
         with:
           host: ${{ secrets.HOSTING_SERVER }}
           username: "root"
-          key: ${{ secrets.HOSTING_SSH_KEY }}
+          password: ${{ secrets.HOSTING_PASSWORD }}
           script: |
-                  apt-get update
-                  apt-get install -y docker.io certbot
-                  certbot certonly --standalone -d mirea-api.ru --non-interactive --agree-tos -m tima.privalov@bk.ru
+            apt-get update
+            apt-get install -y docker.io certbot
+
+            # Останавливаем Nginx перед запуском Certbot
+            sudo systemctl stop nginx
+            certbot certonly --standalone -d mirea-api.ru --non-interactive --agree-tos -m m646856@yandex.ru
+            # Перезапускаем Nginx после обновления сертификатов
+            sudo systemctl start nginx
 
       - name: Create directory on server
         uses: appleboy/ssh-action@v0.1.0
@@ -84,6 +89,7 @@ jobs:
           target: "/home/${{ secrets.HOSTING_NAME }}/app/"
           rm: true
           debug: true
+
       - name: Copy Nginx Configuration
         uses: appleboy/scp-action@v0.1.0
         with:
@@ -103,7 +109,7 @@ jobs:
           password: ${{ secrets.HOSTING_PASSWORD }}
           script: |
             cd /home/${{ secrets.HOSTING_NAME }}/app
-            docker-compose down  # Stop existing containers
+            docker-compose down  # Остановка существующих контейнеров
             docker pull ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
-            docker-compose up -d  # Start containers with new image
+            docker-compose up -d  # Запуск контейнеров с обновленным образом
           debug: true
