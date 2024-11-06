@@ -61,15 +61,10 @@ jobs:
           username: "root"
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
-            # Останавливаем любой процесс, использующий порт 80
-            sudo fuser -k 80/tcp || true
-            
-            # Устанавливаем Certbot, если он не установлен
-            sudo apt-get update
-            sudo apt-get install -y certbot
-  
-            # Настроим Certbot для получения сертификата
-            sudo certbot certonly --standalone --non-interactive --agree-tos -m tima.privalov@bk.ru -d mirea-api.ru
-            
-            # Проверяем успешность получения сертификата
-            sudo ls /etc/letsencrypt/live/mirea-api.ru/
+            # Останавливаем текущие контейнеры
+            cd /path/to/your/docker-compose-directory
+            docker-compose down
+
+            # Обновляем Docker-образ и запускаем контейнеры
+            docker-compose pull
+            docker-compose up -d
