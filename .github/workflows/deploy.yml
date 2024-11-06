@@ -61,6 +61,13 @@ jobs:
           username: "root"
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
+            # Добавляем ключ хоста для SSH
+            mkdir -p ~/.ssh
+            echo "$HOST_SSH_KEY" >> ~/.ssh/known_hosts
+  
+            # Создаем директорию для проекта
+            mkdir -p /home/username/project
+            
             # Загрузка файлов через scp
             scp -r . root@${{ secrets.HOSTING_SERVER }}:/home/username/project
   
