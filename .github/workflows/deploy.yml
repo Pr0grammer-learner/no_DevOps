@@ -59,12 +59,11 @@ jobs:
         with:
           host: ${{ secrets.HOSTING_SERVER }}
           username: ${{ secrets.HOSTING_NAME }}
-          password: ${{ secrets.HOSTING_PASSWORD }}
+          key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
-            apt-get update
-            apt-get install -y docker.io certbot
-
-            certbot certonly --standalone -d logunovoa.ru --non-interactive --agree-tos -m m646856@yandex.ru
+                  apt-get update
+                  apt-get install -y docker.io certbot
+                  certbot certonly --standalone -d mirea-api.ru --non-interactive --agree-tos -m tima.privalov@bk.ru
 
       - name: Create directory on server
         uses: appleboy/ssh-action@v0.1.0
