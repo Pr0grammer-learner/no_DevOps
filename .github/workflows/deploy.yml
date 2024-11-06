@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+  
       - name: Deploy to Server
         uses: appleboy/ssh-action@master
         with:
@@ -61,14 +61,17 @@ jobs:
           username: "root"
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
-            apt-get update
-            apt-get install -y docker.io nginx certbot
-
+            # Загрузка файлов через scp
+            scp -r . root@${{ secrets.HOSTING_SERVER }}:/home/username/project
+  
+            # Переходим в директорию с docker-compose.yml
+            cd /home/username/project
+            
             # Останавливаем любой процесс, использующий порт 80
             sudo fuser -k 80/tcp || true
             
             # Настройка и получение сертификата через Certbot
-            certbot certonly --standalone -d mirea-api.ru --non-interactive --agree-tos -m m646856@yandex.ru
-
-            # Запускаем Nginx
-            sudo systemctl start nginx
+            docker-compose run certbot certonly --webroot -w /var/www/certbot -d mirea-api.ru --non-interactive --agree-tos -m m646856@yandex.ru
+            
+            # Запускаем контейнеры с nginx
+            docker-compose up -d
