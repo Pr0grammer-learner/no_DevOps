@@ -19,7 +19,8 @@ def client():
 # Тест для проверки главной страницы
 def test_home_page(client):
     response = client.get('/')
-    assert response.status_code == 404  # Так как у нас нет главной страницы, ожидаем 404
+    assert response.status_code == 200  # Ожидаем код 200 для главной страницы
+    assert b'Dobro pozhalovat v dokumentatsiyu API' in response.data  # Проверяем содержимое docs.html
 
 # Тест для маршрута, возвращающего данные
 def test_data_page(client):
