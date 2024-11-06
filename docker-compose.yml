@@ -50,10 +50,8 @@ services:
       - ./certbot/conf:/etc/letsencrypt  # SSL-сертификаты
       - ./certbot/www:/var/www/certbot    # Временные файлы для проверки домена
     entrypoint: >
-      sh -c 'trap exit TERM; while :; do
-      certbot renew --webroot -w /var/www/certbot --quiet;
-      sleep 12h;
-      done'
+      sh -c 'trap exit TERM; certbot certonly --webroot -w /var/www/certbot -d mirea-api.ru && \
+             while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h; done'
     networks:
       - app_network
 
