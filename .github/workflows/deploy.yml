@@ -64,14 +64,12 @@ jobs:
             # Останавливаем любой процесс, использующий порт 80
             sudo fuser -k 80/tcp || true
             
-            # Устанавливаем docker-compose, если он не установлен
-            sudo apt-get install -y docker-compose
-
-            # Создаем директорию для certbot, если она еще не существует
-            sudo mkdir -p /var/www/certbot
-
-            # Настройка и получение сертификата через Certbot
-            sudo docker-compose run certbot certonly --webroot -w /var/www/certbot -d mirea-api.ru --non-interactive --agree-tos -m tima.privalov@bk.ru
+            # Устанавливаем Certbot, если он не установлен
+            sudo apt-get update
+            sudo apt-get install -y certbot
+  
+            # Настроим Certbot для получения сертификата
+            sudo certbot certonly --standalone --non-interactive --agree-tos -m tima.privalov@bk.ru -d mirea-api.ru
             
-            # Запускаем контейнеры с nginx
-            sudo docker-compose up -d
+            # Проверяем успешность получения сертификата
+            sudo ls /etc/letsencrypt/live/mirea-api.ru/
