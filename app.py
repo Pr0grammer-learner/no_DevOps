@@ -24,6 +24,11 @@ app.config['CACHE_REDIS_URL'] = f"redis://{app.config['CACHE_REDIS_HOST']}:{app.
 # Инициализация кэша
 cache = Cache(app)
 
+@app.route('/')
+def home():
+    # Возвращаем файл docs.html, который будет содержать инструкцию по использованию API
+    return render_template('docs.html')
+
 @app.route('/container_id')
 def get_container_id():
     return jsonify({'container_id': socket.gethostname()})
