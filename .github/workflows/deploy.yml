@@ -58,7 +58,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOSTING_SERVER }}
-          username: ${{ secrets.HOSTING_NAME }}
+          username: "root"
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
                   apt-get update
