@@ -5,42 +5,55 @@ services:
     expose:
       - "5000"  # Пробрасываем порт Flask-приложения
     depends_on:
-      - db  # Говорим, что контейнер web должен запускаться после db
+      - db
       - redis
     environment:
-      - REDIS_HOST=redis  # Настраиваем переменную окружения для Redis
+      - REDIS_HOST=redis
     networks:
       - app_network
 
   db:
-    image: postgres:13  # Используем образ PostgreSQL версии 13
+    image: postgres:13
     environment:
-      POSTGRES_USER: user  # Логин для подключения к базе данных
-      POSTGRES_PASSWORD: password  # Пароль для пользователя
-      POSTGRES_DB: flask_db  # Название базы данных
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: flask_db
     ports:
-      - "5432:5432"  # Пробрасываем порт PostgreSQL
+      - "5432:5432"
     networks:
       - app_network
 
   redis:
-    image: "redis:alpine"  # Используем образ Redis
+    image: "redis:alpine"
     ports:
-      - "6379:6379"  # Пробрасываем порт Redis
+      - "6379:6379"
     networks:
       - app_network
 
   nginx:
-    image: nginx:latest  # Используем последний образ Nginx
+    image: nginx:latest
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf  # Подключаем локальный файл конфигурации Nginx
-      - /etc/letsencrypt:/etc/letsencrypt  # Том для SSL-сертификатов
-      - /var/www/certbot:/var/www/certbot  # Том для временных файлов Certbot
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     ports:
-      - "80:80"  # Пробрасываем порт 80 для внешнего доступа
-      - "443:443"  # Пробрасываем порт 443 для HTTPS
+      - "80:80"
+      - "443:443"
     depends_on:
-      - web  # Nginx будет запускаться после запуска Flask-приложения
+      - web
+    networks:
+      - app_network
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt  # SSL-сертификаты
+      - ./certbot/www:/var/www/certbot    # Временные файлы для проверки домена
+    entrypoint: >
+      sh -c 'trap exit TERM; while :; do
+      certbot renew --webroot -w /var/www/certbot --quiet;
+      sleep 12h;
+      done'
     networks:
       - app_network
 
