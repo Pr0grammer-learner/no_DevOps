@@ -20,7 +20,7 @@ def client():
 def test_home_page(client):
     response = client.get('/')
     assert response.status_code == 200  # Ожидаем код 200 для главной страницы
-    assert b'Добро пожаловать в документацию API для mirea-api.ru' in response.data  # Проверяем содержимое docs.html
+    assert 'Добро пожаловать в документацию API для mirea-api.ru' in response.data.decode('utf-8')  # Проверяем содержимое docs.html
 
 # Тест для маршрута, возвращающего данные
 def test_data_page(client):
