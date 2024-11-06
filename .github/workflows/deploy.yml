@@ -61,20 +61,11 @@ jobs:
           username: "root"
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
-            # Создаем директорию для проекта
-            mkdir -p /home/username/project
-            
-            # Загрузка файлов через scp
-            scp -r . root@${{ secrets.HOSTING_SERVER }}:/home/username/project
-            
-            # Переходим в директорию с docker-compose.yml
-            cd /home/username/project
-            
             # Останавливаем любой процесс, использующий порт 80
             sudo fuser -k 80/tcp || true
             
             # Настройка и получение сертификата через Certbot
-            docker-compose run certbot certonly --webroot -w /var/www/certbot -d mirea-api.ru --non-interactive --agree-tos -m m646856@yandex.ru
+            docker-compose run certbot certonly --webroot -w /var/www/certbot -d mirea-api.ru --non-interactive --agree-tos -m tima.privalov@bk.ru
             
             # Запускаем контейнеры с nginx
             docker-compose up -d
