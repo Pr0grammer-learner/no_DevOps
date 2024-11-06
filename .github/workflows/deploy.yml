@@ -64,8 +64,21 @@ jobs:
             # Останавливаем любой процесс, использующий порт 80
             sudo fuser -k 80/tcp || true
             
+            # Создаем директорию проекта, если ее нет
+            mkdir -p /home/username/project
+            
+            # Копируем файлы проекта на сервер
+            scp -r * root@${{ secrets.HOSTING_SERVER }}:/home/username/project/
+
+            # Переходим в директорию проекта
+            cd /home/username/project
+            
+            # Проверяем наличие docker-compose.yml
+            ls -l
+
             # Настройка и получение сертификата через Certbot
             docker-compose run certbot certonly --webroot -w /var/www/certbot -d mirea-api.ru --non-interactive --agree-tos -m tima.privalov@bk.ru
             
             # Запускаем контейнеры с nginx
             docker-compose up -d
+
