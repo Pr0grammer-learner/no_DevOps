@@ -96,18 +96,6 @@ jobs:
           rm: false 
           debug: true
 
-      #- name: Deploy New Docker Image
-       # uses: appleboy/ssh-action@v0.1.0
-        #with:
-         # host: ${{ secrets.HOSTING_SERVER }}
-          #username: ${{ secrets.HOSTING_NAME }}
-          #key: ${{ secrets.HOSTING_SSH_KEY }}
-          #script: |
-           # cd /home/${{ secrets.HOSTING_NAME }}/app
-            #docker-compose down  # Stop existing containers
-            #docker pull ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
-            #docker-compose up -d  # Start containers with new image
-          #debug: true
       - name: Deploy New Docker Image
         uses: appleboy/ssh-action@v0.1.0
         with:
@@ -116,7 +104,7 @@ jobs:
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
             cd /home/${{ secrets.HOSTING_NAME }}/app
-            docker-compose down --remove-orphans  # Stop existing containers
+            docker-compose down  # Stop existing containers
             docker pull ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
-            docker-compose up -d -f docker-compose.yml  # Start containers with new image
+            docker-compose up -d  # Start containers with new image
           debug: true
