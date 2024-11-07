@@ -25,7 +25,8 @@ services:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt/live/mirea-api.ru:/etc/letsencrypt/live/mirea-api.ru:ro
+      - /etc/letsencrypt:/etc/letsencrypt  # Том для SSL-сертификатов
+      - /var/www/certbot:/var/www/certbot  # Том для временных файлов Certbot
     ports:
       - "80:80"
       - "443:443"
