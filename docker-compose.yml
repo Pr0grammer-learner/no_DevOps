@@ -25,6 +25,7 @@ services:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/live/mirea-api.ru:/etc/letsencrypt/live/mirea-api.ru:ro
     ports:
       - "80:80"
       - "443:443"
