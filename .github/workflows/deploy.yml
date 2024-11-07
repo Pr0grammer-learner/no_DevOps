@@ -58,7 +58,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOSTING_SERVER }}
-          username: "root"
+          username: ${{ secrets.HOSTING_NAME }}
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
             apt-get update
@@ -70,7 +70,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.0
         with:
           host: ${{ secrets.HOSTING_SERVER }}
-          username: "root"
+          username: ${{ secrets.HOSTING_NAME }}
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
             mkdir -p /home/${{ secrets.HOSTING_NAME }}/app/
@@ -79,7 +79,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.HOSTING_SERVER }}
-          username: "root"
+          username: ${{ secrets.HOSTING_NAME }}
           key: ${{ secrets.HOSTING_SSH_KEY }}
           source: docker-compose.yml
           target: "/home/${{ secrets.HOSTING_NAME }}/app/"
@@ -89,7 +89,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.HOSTING_SERVER }}
-          username: "root"
+          username: ${{ secrets.HOSTING_NAME }}
           key: ${{ secrets.HOSTING_SSH_KEY }}
           source: nginx.conf
           target: "/home/${{ secrets.HOSTING_NAME }}/app/"
@@ -100,7 +100,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.0
         with:
           host: ${{ secrets.HOSTING_SERVER }}
-          username: "root"
+          username: ${{ secrets.HOSTING_NAME }}
           key: ${{ secrets.HOSTING_SSH_KEY }}
           script: |
             cd /home/${{ secrets.HOSTING_NAME }}/app
