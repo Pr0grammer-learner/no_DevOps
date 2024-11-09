@@ -1,12 +1,14 @@
-from flask import Flask, jsonify, request, render_template 
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_caching import Cache
 import os
 import socket
+from prometheus_flask_exporter import PrometheusMetrics
+
 
 app = Flask(__name__)
-
+metrics = PrometheusMetrics(app)
 # Настройки базы данных PostgreSQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:password@db:5432/flask_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -24,10 +26,9 @@ app.config['CACHE_REDIS_URL'] = f"redis://{app.config['CACHE_REDIS_HOST']}:{app.
 # Инициализация кэша
 cache = Cache(app)
 
-@app.route('/')
-def home():
-    # Возвращаем файл docs.html, который будет содержать инструкцию по использованию API
-    return render_template('docs.html')
+@app.route('/health')
+def health_check():
+    return jsonify(status="OK"), 200
 
 @app.route('/container_id')
 def get_container_id():
@@ -84,6 +85,10 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'message': f'User {id} deleted successfully'})
+
+@app.route('/')
+def hello_world():
+    return 'Hello, Docker!'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
