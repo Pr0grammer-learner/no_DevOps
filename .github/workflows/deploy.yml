@@ -91,6 +91,18 @@ jobs:
           source: docker-compose.yml
           target: "/home/${{ secrets.HOSTING_NAME }}/app/"
 
+      # New step to copy prometheus.yml and logstash.conf
+      - name: Copy Config Files
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.HOSTING_SERVER }}
+          username: ${{ secrets.HOSTING_NAME }}
+          password: ${{ secrets.HOSTING_PASSWORD }}
+          source: |
+            prometheus.yml
+            logstash.conf
+          target: "/home/${{ secrets.HOSTING_NAME }}/app/"
+
       - name: Deploy New Docker Image
         uses: appleboy/ssh-action@v0.1.0
         with:
@@ -109,7 +121,7 @@ jobs:
           host: ${{ secrets.HOSTING_SERVER }}
           username: ${{ secrets.HOSTING_NAME }}
           password: ${{ secrets.HOSTING_PASSWORD }}
-          source: "*.yml"  # Замените на точные имена файлов, если нужно
+          source: "*.yml"  # Replace with exact file names if needed
           target: "/home/${{ secrets.HOSTING_NAME }}/app/"
 
       - name: Apply Kubernetes Manifests
