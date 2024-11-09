@@ -130,6 +130,17 @@ jobs:
           source: "*.yml"  # Replace with exact file names if needed
           target: "/home/${{ secrets.HOSTING_NAME }}/app/"
 
+      - name: Install kubectl
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.HOSTING_SERVER }}
+          username: ${{ secrets.HOSTING_NAME }}
+          password: ${{ secrets.HOSTING_PASSWORD }}
+          script: |
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/
+        
       - name: Apply Kubernetes Manifests
         uses: appleboy/ssh-action@master
         with:
