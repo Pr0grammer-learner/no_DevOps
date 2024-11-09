@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: ggwp228/flask-app:latest
+    image: capthca/flask-app:latest
     expose:
       - "5000"  # Пробрасываем порт Flask-приложения
     depends_on:
