@@ -9,6 +9,16 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis  # Настраиваем переменную окружения для Redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - app_network
 
@@ -70,6 +80,40 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
       - app_network
+  
+  elasticsearch:
+    image: elasticsearch:7.9.3
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - app_network
+  
+  logstash:
+    image: logstash:7.9.3
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5000:5000"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app_network
+  
+  kibana:
+    image: kibana:7.9.3
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app_network
+
+volumes:
+  esdata:
 
 networks:
   app_network:
