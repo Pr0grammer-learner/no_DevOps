@@ -1,37 +1,73 @@
 version: '3'
 services:
   web:
-    image: capthca/flask-app:latest
+    image: ggwp228/flask-app:latest
     expose:
-      - "5000"
+      - "5000"  # Пробрасываем порт Flask-приложения
+    depends_on:
+      - db  # Говорим, что контейнер web должен запускаться после db
+      - redis
+    environment:
+      - REDIS_HOST=redis  # Настраиваем переменную окружения для Redis
     networks:
       - app_network
 
   db:
-    image: postgres:13
+    image: postgres:13  # Используем образ PostgreSQL версии 13
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: flask_db
+      POSTGRES_USER: user  # Логин для подключения к базе данных
+      POSTGRES_PASSWORD: password  # Пароль для пользователя
+      POSTGRES_DB: flask_db  # Название базы данных
+    ports:
+      - "5432:5432"  # Пробрасываем порт PostgreSQL
     networks:
       - app_network
 
   redis:
-    image: "redis:alpine"
+    image: "redis:alpine"  # Используем образ Redis
+    ports:
+      - "6379:6379"  # Пробрасываем порт Redis
     networks:
       - app_network
 
   nginx:
-    image: nginx:latest
+    image: nginx:latest  # Используем последний образ Nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Подключаем локальный файл конфигурации Nginx
       - /etc/letsencrypt:/etc/letsencrypt  # Том для SSL-сертификатов
       - /var/www/certbot:/var/www/certbot  # Том для временных файлов Certbot
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:80"  # Пробрасываем порт 80 для внешнего доступа
+      - "443:443"  # Пробрасываем порт 443 для HTTPS
     depends_on:
-      - web
+      - web  # Nginx будет запускаться после запуска Flask-приложения
+    networks:
+      - app_network
+  
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app_network
+  
+  node-exporter:
+    image: prom/node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - app_network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
       - app_network
 
