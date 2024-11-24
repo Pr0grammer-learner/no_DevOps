@@ -47,11 +47,15 @@ class User(db.Model):
 
 # Пример маршрута с кэшированием
 @app.route('/api/access')
-@cache.cached(timeout=300)  # Данные будут кэшироваться на 5 минут
+@cache.cached(timeout=300, query_string=True)  # Данные будут кэшироваться на 5 минут
 def get_data():
     # Получение уникального токена
+    user_ip = request.remote_addr # Уникальный параметр для каждого пользователя
+
+    # Генерация токена (при отсутствии в кэше)
     user_token = token_generator.generate_token()
-    return jsonify({'your_token': user_token})
+
+    return jsonify({'ip': user_ip, 'your_token': user_token})
 
 # CRUD операции
 @app.route('/users', methods=['POST'])
