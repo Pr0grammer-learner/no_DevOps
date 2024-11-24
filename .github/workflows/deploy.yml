@@ -82,15 +82,6 @@ jobs:
           script: |
             mkdir -p /home/${{ secrets.HOSTING_NAME }}/app/
 
-      - name: Copy TokenGenerator
-        uses: applebpy/scp-action@v0.1.0
-        with:
-          host: ${{ secrets.HOSTING_SERVER }}
-          username: ${{ secrets.HOSTING_NAME }}
-          password: ${{ secrets.HOSTING_PASSWORD }}
-          source: Token_generator.py
-          target: "/home/${{ secrets.HOSTING_NAME }}/app/"
-
       - name: Copy Templates Directory
         uses: appleboy/scp-action@v0.1.0
         with:
