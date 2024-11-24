@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем все файлы приложения в контейнер
 COPY . /app
+COPY templates /app/templates
 
 # Устанавливаем переменную окружения для Flask
 ENV FLASK_APP=app.py
