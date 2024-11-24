@@ -2,9 +2,10 @@ from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_caching import Cache
+from prometheus_flask_exporter import PrometheusMetrics
+from Token_generator import TokenGenerator
 import os
 import socket
-from prometheus_flask_exporter import PrometheusMetrics
 
 
 app = Flask(__name__)
@@ -25,6 +26,7 @@ app.config['CACHE_REDIS_URL'] = f"redis://{app.config['CACHE_REDIS_HOST']}:{app.
 
 # Инициализация кэша
 cache = Cache(app)
+token_generator = TokenGenerator()
 
 @app.route('/health')
 def health_check():
@@ -44,11 +46,12 @@ class User(db.Model):
         return f'<User {self.username}>'
 
 # Пример маршрута с кэшированием
-@app.route('/data')
-@cache.cached(timeout=60)  # Данные будут кэшироваться на 60 секунд
+@app.route('/api/access')
+@cache.cached(timeout=300)  # Данные будут кэшироваться на 5 минут
 def get_data():
-    # Эмуляция долгого запроса (например, к базе данных)
-    return jsonify({'data': 'This is some data!'})
+    # Получение уникального токена
+    user_token = token_generator.generate_token()
+    return jsonify({'your_token': user_token})
 
 # CRUD операции
 @app.route('/users', methods=['POST'])
