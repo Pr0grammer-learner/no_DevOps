@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_caching import Cache
@@ -87,8 +87,8 @@ def delete_user(id):
     return jsonify({'message': f'User {id} deleted successfully'})
 
 @app.route('/')
-def hello_world():
-    return 'Hello, Docker!'
+def main_page():
+    render_template('docs.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
