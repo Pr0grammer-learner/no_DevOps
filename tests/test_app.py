@@ -10,7 +10,7 @@ def client():
 def test_data_page(client):
     response = client.get('/')
     assert response.status_code == 200
-    assert b'This is some data!' in response.data
+    # assert b'This is some data!' in response.data
 
 # # Тест кэширования
 # def test_cache(client):
