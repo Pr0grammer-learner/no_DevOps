@@ -88,7 +88,7 @@ def delete_user(id):
 
 @app.route('/')
 def main_page():
-    render_template('docs.html')
+    return render_template('docs.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
