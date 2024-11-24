@@ -82,13 +82,14 @@ jobs:
           script: |
             mkdir -p /home/${{ secrets.HOSTING_NAME }}/app/
 
-      - name: Prepare Templates Directory
-        uses: appleboy/ssh-action@v0.1.0
+      - name: Copy Templates Directory
+        uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.HOSTING_SERVER }}
           username: ${{ secrets.HOSTING_NAME }}
           password: ${{ secrets.HOSTING_PASSWORD }}
-          script: mkdir -p /home/${{ secrets.HOSTING_NAME }}/app/templates/
+          source: templates
+          target: "/home/${{ secrets.HOSTING_NAME }}/app/"
 
       - name: Copy Deployment Files
         uses: appleboy/scp-action@v0.1.0
